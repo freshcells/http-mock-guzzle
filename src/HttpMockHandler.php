@@ -25,11 +25,6 @@ class HttpMockHandler
      */
     private $server;
 
-    /**
-     * Constructor.
-     *
-     * @param ServerInterface $server
-     */
     public function __construct(ServerInterface $server)
     {
         $this->server = $server;
@@ -39,10 +34,6 @@ class HttpMockHandler
      * Creates a default handler stack that uses the provided {@see ServerInterface} via a mock handler.
      *
      * @see HandlerStack::create()
-     *
-     * @param ServerInterface $server
-     *
-     * @return HandlerStack
      */
     public static function createStack(ServerInterface $server): HandlerStack
     {
@@ -52,12 +43,7 @@ class HttpMockHandler
     /**
      * Handles a request.
      *
-     * @param RequestInterface $request
-     * @param array            $options
-     *
      * @throws RuntimeException when an error occurs while trying to write the response into a stream or file
-     *
-     * @return PromiseInterface
      */
     public function __invoke(RequestInterface $request, array $options): PromiseInterface
     {
@@ -82,20 +68,20 @@ class HttpMockHandler
         return $promise->then(
             function (ResponseInterface $response) use ($request, $options) {
                 if (isset($options['on_stats'])) {
-                    call_user_func($options['on_stats'], new TransferStats($request, $response, 0));
+                    \call_user_func($options['on_stats'], new TransferStats($request, $response, 0));
                 }
 
                 if (isset($options['sink'])) {
                     $sink = $options['sink'];
                     $contents = (string) $response->getBody();
 
-                    if (is_resource($sink)) {
+                    if (\is_resource($sink)) {
                         // See http://php.net/manual/en/function.fwrite.php#96951
                         $bytes = @fwrite($sink, $contents);
-                        if (false === $bytes || ($bytes !== ($length = strlen($contents)) && 0 !== $length)) {
+                        if (false === $bytes || (($length = \strlen($contents)) !== $bytes && 0 !== $length)) {
                             throw RuntimeException::responseWriteError('resource');
                         }
-                    } elseif (is_string($sink)) {
+                    } elseif (\is_string($sink)) {
                         if (false === @file_put_contents($sink, $contents)) {
                             throw RuntimeException::responseWriteError($sink);
                         }
@@ -112,7 +98,7 @@ class HttpMockHandler
             },
             function ($reason) use ($request, $options) {
                 if (isset($options['on_stats'])) {
-                    call_user_func($options['on_stats'], new TransferStats($request, null, 0, $reason));
+                    \call_user_func($options['on_stats'], new TransferStats($request, null, 0, $reason));
                 }
 
                 return new RejectedPromise($reason);

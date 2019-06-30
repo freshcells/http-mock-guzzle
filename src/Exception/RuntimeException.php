@@ -11,11 +11,6 @@ class RuntimeException extends \RuntimeException implements Exception
 {
     /**
      * Creates an instance for an error while trying to write a response into a stream or file.
-     *
-     * @param string          $target
-     * @param \Exception|null $previous
-     *
-     * @return self
      */
     public static function responseWriteError(string $target, \Exception $previous = null): self
     {

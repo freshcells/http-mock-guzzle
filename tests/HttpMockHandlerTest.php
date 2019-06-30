@@ -30,7 +30,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        if (in_array(vfsStream::SCHEME, stream_get_wrappers(), true)) {
+        if (\in_array(vfsStream::SCHEME, stream_get_wrappers(), true)) {
             vfsStreamWrapper::unregister();
         }
     }
@@ -40,8 +40,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvoke()
     {
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response())
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response())
         );
 
         $result = $handler(new Request('GET', 'http://foo'), []);
@@ -55,8 +56,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokeWithNoResponse()
     {
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response())
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response())
         );
 
         $result = $handler(new Request('GET', 'http://bar'), []);
@@ -74,10 +76,11 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokeWithServerException()
     {
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return(function () {
-                throw new \RuntimeException('Foo');
-            })
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return(function () {
+                    throw new \RuntimeException('Foo');
+                })
         );
 
         $result = $handler(new Request('GET', 'http://foo'), []);
@@ -95,15 +98,16 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvokeWithOnStatsOption()
     {
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response())
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response())
         );
 
         $onStatsInvoked = false;
 
         $result = $handler($request = new Request('GET', 'http://foo'), [
             RequestOptions::ON_STATS => function ($stats) use (&$onStatsInvoked, $request, $response) {
-                self::assertSame(1, func_num_args());
+                self::assertSame(1, \func_num_args());
                 self::assertInstanceOf(TransferStats::class, $stats);
                 self::assertSame($request, $stats->getRequest());
                 self::assertSame($response, $stats->getResponse());
@@ -126,17 +130,18 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $exception = new \RuntimeException('Foo');
 
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return(function () use ($exception) {
-                throw $exception;
-            })
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return(function () use ($exception) {
+                    throw $exception;
+                })
         );
 
         $onStatsInvoked = false;
 
         $result = $handler($request = new Request('GET', 'http://foo'), [
             RequestOptions::ON_STATS => function ($stats) use (&$onStatsInvoked, $request, $exception) {
-                self::assertSame(1, func_num_args());
+                self::assertSame(1, \func_num_args());
                 self::assertInstanceOf(TransferStats::class, $stats);
                 self::assertSame($request, $stats->getRequest());
                 self::assertNull($stats->getResponse());
@@ -168,8 +173,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $file = vfsStream::setup()->url().'/foo';
 
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
         );
 
         $result = $handler(new Request('GET', 'http://foo'), [
@@ -193,8 +199,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
         file_put_contents($file, 'Bar');
         chmod($file, 0);
 
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
         );
 
         $result = $handler(new Request('GET', 'http://foo'), [
@@ -223,8 +230,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $file = vfsStream::setup()->url().'/foo';
 
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
         );
 
         $result = $handler(new Request('GET', 'http://foo'), [
@@ -246,8 +254,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
         $file = vfsStream::setup()->url().'/foo';
         file_put_contents($file, 'Bar');
 
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
         );
 
         $result = $handler(new Request('GET', 'http://foo'), [
@@ -275,8 +284,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $file = vfsStream::setup()->url().'/foo';
 
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
         );
 
         $result = $handler(new Request('GET', 'http://foo'), [
@@ -298,8 +308,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
         $file = vfsStream::setup()->url().'/foo';
         file_put_contents($file, 'Bar');
 
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
         );
 
         $result = $handler(new Request('GET', 'http://foo'), [
@@ -328,8 +339,9 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
         ClockMock::withClockMock(true);
         ClockMock::register(self::class);
 
-        $handler = new HttpMockHandler((new Server())
-            ->whenUri('http://foo')->return($response = new Response())
+        $handler = new HttpMockHandler(
+            (new Server())
+                ->whenUri('http://foo')->return($response = new Response())
         );
 
         $start = microtime(true);
@@ -356,7 +368,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
 
         $stack = HttpMockHandler::createStack($server);
 
-        self::assertTrue(is_callable($stack));
+        self::assertTrue(\is_callable($stack));
         self::assertSame($response, $stack(new Request('GET', 'http://foo', [], 'Foo'), [])->wait());
     }
 

@@ -10,7 +10,6 @@
         "jfalque/http-mock": "~1.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "2.0.*",
         "mikey179/vfsStream": "1.6.*",
         "phpunit/phpunit": "5.7.*",
         "symfony/phpunit-bridge": "3.2.*"
