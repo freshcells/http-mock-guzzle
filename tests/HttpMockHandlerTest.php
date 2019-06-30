@@ -286,8 +286,14 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
                 ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
         );
 
+        $resource = fopen($file, 'w+');
+
+        if (false === $resource) {
+            throw new \RuntimeException("Could not open file {$file}");
+        }
+
         $result = $handler(new Request('GET', 'http://foo'), [
-            RequestOptions::SINK => new Stream(fopen($file, 'w+')),
+            RequestOptions::SINK => new Stream($resource),
         ]);
 
         self::assertInstanceOf(PromiseInterface::class, $result);
@@ -310,8 +316,14 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
                 ->whenUri('http://foo')->return($response = new Response(200, [], 'Foo'))
         );
 
+        $resource = fopen($file, 'r');
+
+        if (false === $resource) {
+            throw new \RuntimeException("Could not open file {$file}");
+        }
+
         $result = $handler(new Request('GET', 'http://foo'), [
-            RequestOptions::SINK => new Stream(fopen($file, 'r')),
+            RequestOptions::SINK => new Stream($resource),
         ]);
 
         self::assertInstanceOf(PromiseInterface::class, $result);
