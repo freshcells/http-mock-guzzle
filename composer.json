@@ -5,13 +5,13 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=7",
+        "php": ">=7.2",
         "guzzlehttp/guzzle": "^6.0",
         "jfalque/http-mock": "^1.0"
     },
     "require-dev": {
         "mikey179/vfsStream": "^1.6",
-        "phpunit/phpunit": "^5.7",
+        "phpunit/phpunit": "^8.0",
         "symfony/phpunit-bridge": "^3.2"
     },
     "autoload": {

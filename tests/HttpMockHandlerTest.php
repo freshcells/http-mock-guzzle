@@ -6,7 +6,6 @@ namespace Jfalque\HttpMock\Guzzle\Tests;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Promise\RejectionException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -18,14 +17,15 @@ use Jfalque\HttpMock\Guzzle\HttpMockHandler;
 use Jfalque\HttpMock\Server;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\ClockMock;
 
 /**
  * {@see HttpMockHandler} tests.
  */
-class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
+class HttpMockHandlerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if (\in_array(vfsStream::SCHEME, stream_get_wrappers(), true)) {
             vfsStreamWrapper::unregister();
@@ -35,7 +35,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $handler = new HttpMockHandler(
             (new Server())
@@ -44,14 +44,13 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
 
         $result = $handler(new Request('GET', 'http://foo'), []);
 
-        self::assertInstanceOf(PromiseInterface::class, $result);
         self::assertSame($response, $result->wait());
     }
 
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithNoResponse()
+    public function testInvokeWithNoResponse(): void
     {
         $handler = new HttpMockHandler(
             (new Server())
@@ -59,8 +58,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
         );
 
         $result = $handler(new Request('GET', 'http://bar'), []);
-
-        self::assertInstanceOf(PromiseInterface::class, $result);
 
         $this->expectException(RejectionException::class);
         $this->expectExceptionMessage('The server returned no response for request GET http://bar.');
@@ -71,7 +68,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithServerException()
+    public function testInvokeWithServerException(): void
     {
         $handler = new HttpMockHandler(
             (new Server())
@@ -82,8 +79,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
 
         $result = $handler(new Request('GET', 'http://foo'), []);
 
-        self::assertInstanceOf(PromiseInterface::class, $result);
-
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Foo');
 
@@ -93,7 +88,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithOnStatsOption()
+    public function testInvokeWithOnStatsOption(): void
     {
         $handler = new HttpMockHandler(
             (new Server())
@@ -109,13 +104,14 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
                 self::assertSame($request, $stats->getRequest());
                 self::assertSame($response, $stats->getResponse());
                 self::assertNull($stats->getHandlerErrorData());
-                self::assertSame(0, $stats->getTransferTime());
+                /** @var int|float $transferTime */
+                $transferTime = $stats->getTransferTime();
+                self::assertSame(0, $transferTime);
 
                 $onStatsInvoked = true;
             },
         ]);
 
-        self::assertInstanceOf(PromiseInterface::class, $result);
         self::assertSame($response, $result->wait());
         self::assertTrue($onStatsInvoked);
     }
@@ -123,7 +119,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithOnStatsOptionError()
+    public function testInvokeWithOnStatsOptionError(): void
     {
         $exception = new \RuntimeException('Foo');
 
@@ -143,13 +139,13 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
                 self::assertSame($request, $stats->getRequest());
                 self::assertNull($stats->getResponse());
                 self::assertSame($exception, $stats->getHandlerErrorData());
-                self::assertSame(0, $stats->getTransferTime());
+                /** @var int|float $transferTime */
+                $transferTime = $stats->getTransferTime();
+                self::assertSame(0, $transferTime);
 
                 $onStatsInvoked = true;
             },
         ]);
-
-        self::assertInstanceOf(PromiseInterface::class, $result);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Foo');
@@ -166,7 +162,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithSinkOptionAsString()
+    public function testInvokeWithSinkOptionAsString(): void
     {
         $file = vfsStream::setup()->url().'/foo';
 
@@ -179,7 +175,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
             RequestOptions::SINK => $file,
         ]);
 
-        self::assertInstanceOf(PromiseInterface::class, $result);
         self::assertFileNotExists($file);
 
         self::assertSame($response, $result->wait());
@@ -190,7 +185,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithSinkOptionAsStringError()
+    public function testInvokeWithSinkOptionAsStringError(): void
     {
         $file = vfsStream::setup()->url().'/foo';
         file_put_contents($file, 'Bar');
@@ -204,8 +199,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
         $result = $handler(new Request('GET', 'http://foo'), [
             RequestOptions::SINK => $file,
         ]);
-
-        self::assertInstanceOf(PromiseInterface::class, $result);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(sprintf('Could not write response into %s.', $file));
@@ -223,7 +216,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithSinkOptionAsResource()
+    public function testInvokeWithSinkOptionAsResource(): void
     {
         $file = vfsStream::setup()->url().'/foo';
 
@@ -236,7 +229,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
             RequestOptions::SINK => fopen($file, 'w+'),
         ]);
 
-        self::assertInstanceOf(PromiseInterface::class, $result);
         self::assertSame('', file_get_contents($file));
 
         self::assertSame($response, $result->wait());
@@ -246,7 +238,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithSinkOptionAsResourceError()
+    public function testInvokeWithSinkOptionAsResourceError(): void
     {
         $file = vfsStream::setup()->url().'/foo';
         file_put_contents($file, 'Bar');
@@ -259,8 +251,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
         $result = $handler(new Request('GET', 'http://foo'), [
             RequestOptions::SINK => fopen($file, 'r'),
         ]);
-
-        self::assertInstanceOf(PromiseInterface::class, $result);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Could not write response into resource.');
@@ -277,7 +267,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithSinkOptionAsStream()
+    public function testInvokeWithSinkOptionAsStream(): void
     {
         $file = vfsStream::setup()->url().'/foo';
 
@@ -296,7 +286,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
             RequestOptions::SINK => new Stream($resource),
         ]);
 
-        self::assertInstanceOf(PromiseInterface::class, $result);
         self::assertSame('', file_get_contents($file));
 
         self::assertSame($response, $result->wait());
@@ -306,7 +295,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithSinkOptionAsStreamError()
+    public function testInvokeWithSinkOptionAsStreamError(): void
     {
         $file = vfsStream::setup()->url().'/foo';
         file_put_contents($file, 'Bar');
@@ -326,8 +315,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
             RequestOptions::SINK => new Stream($resource),
         ]);
 
-        self::assertInstanceOf(PromiseInterface::class, $result);
-
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Could not write response into stream.');
 
@@ -343,7 +330,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::__invoke()} test.
      */
-    public function testInvokeWithDelayOption()
+    public function testInvokeWithDelayOption(): void
     {
         ClockMock::withClockMock(true);
         ClockMock::register(self::class);
@@ -359,7 +346,6 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
             RequestOptions::DELAY => 2000,
         ]);
 
-        self::assertInstanceOf(PromiseInterface::class, $result);
         self::assertSame($response, $result->wait());
         self::assertSame(2.0, microtime(true) - $start);
     }
@@ -367,7 +353,7 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * {@see HttpMockHandler::createStack()} test.
      */
-    public function testCreateStack()
+    public function testCreateStack(): void
     {
         $server = (new Server())
             ->whenUri('http://foo')
@@ -377,14 +363,13 @@ class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
 
         $stack = HttpMockHandler::createStack($server);
 
-        self::assertTrue(\is_callable($stack));
         self::assertSame($response, $stack(new Request('GET', 'http://foo', [], 'Foo'), [])->wait());
     }
 
     /**
      * {@see HttpMockHandler} test.
      */
-    public function testWithClient()
+    public function testWithClient(): void
     {
         $server = (new Server())
             ->whenUri('http://foo')

@@ -10,6 +10,8 @@ return PhpCsFixer\Config::create()
         '@PHP56Migration:risky' => true,
         '@PHP70Migration' => true,
         '@PHP70Migration:risky' => true,
+        '@PHP71Migration' => true,
+        '@PHP71Migration:risky' => true,
         '@PHPUnit60Migration:risky' => true,
         'align_multiline_comment' => [
             'comment_type' => 'all_multiline',
@@ -27,6 +29,7 @@ return PhpCsFixer\Config::create()
         'combine_consecutive_issets' => true,
         'combine_consecutive_unsets' => true,
         'comment_to_phpdoc' => true,
+        'compact_nullable_typehint' => true,
         'escape_implicit_backslashes' => [
             'single_quoted' => true,
         ],
@@ -43,6 +46,9 @@ return PhpCsFixer\Config::create()
         ],
         'heredoc_to_nowdoc' => true,
         'linebreak_after_opening_tag' => true,
+        'list_syntax' => [
+            'syntax' => 'short',
+        ],
         'logical_operators' => true,
         'method_argument_space' => [
             'ensure_fully_multiline' => true,
@@ -78,7 +84,6 @@ return PhpCsFixer\Config::create()
         'ordered_imports' => true,
         'php_unit_dedicate_assert' => false,
         'php_unit_method_casing' => true,
-        'php_unit_namespaced' => false,
         'php_unit_ordered_covers' => true,
         'php_unit_set_up_tear_down_visibility' => true,
         'php_unit_test_annotation' => true,
@@ -105,6 +110,7 @@ return PhpCsFixer\Config::create()
         'strict_comparison' => true,
         'strict_param' => true,
         'string_line_ending' => true,
+        'void_return' => false,
         'yoda_style' => [
             'always_move_variable' => true,
         ],
