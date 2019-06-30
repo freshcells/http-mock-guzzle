@@ -1,18 +1,18 @@
 {
     "name": "jfalque/http-mock-guzzle",
     "description": "Integrates jfalque/http-mock into Guzzle",
-    "keywords": ["HTTP", "mock", "test", "guzzle"],
+    "keywords": ["HTTP", "fixtures", "mock", "test", "guzzle"],
     "type": "library",
     "license": "MIT",
     "require": {
         "php": ">=7",
-        "guzzlehttp/guzzle": "~6.0",
-        "jfalque/http-mock": "~1.0"
+        "guzzlehttp/guzzle": "^6.0",
+        "jfalque/http-mock": "^1.0"
     },
     "require-dev": {
-        "mikey179/vfsStream": "1.6.*",
-        "phpunit/phpunit": "5.7.*",
-        "symfony/phpunit-bridge": "3.2.*"
+        "mikey179/vfsStream": "^1.6",
+        "phpunit/phpunit": "^5.7",
+        "symfony/phpunit-bridge": "^3.2"
     },
     "autoload": {
         "psr-4": {
