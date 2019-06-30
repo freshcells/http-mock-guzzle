@@ -25,9 +25,6 @@ use Symfony\Bridge\PhpUnit\ClockMock;
  */
 class HttpMockHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown()
     {
         if (\in_array(vfsStream::SCHEME, stream_get_wrappers(), true)) {
