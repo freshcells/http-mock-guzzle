@@ -4,6 +4,8 @@
 [![Latest Stable Version](https://poser.pugx.org/jfalque/http-mock-guzzle/v/stable)](https://packagist.org/packages/jfalque/http-mock-guzzle)
 [![License](https://poser.pugx.org/jfalque/http-mock-guzzle/license)](https://packagist.org/packages/jfalque/http-mock-guzzle)
 
+**This package is archived and not maintained anymore.**
+
 Provides a [Guzzle](https://github.com/guzzle/guzzle) handler that integrates [HttpMock](https://github.com/julienfalque/http-mock).
 
 ## Installation
