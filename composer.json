@@ -7,7 +7,7 @@
     "abandoned": true,
     "require": {
         "php": ">=7.2",
-        "guzzlehttp/guzzle": "^6.0",
+        "guzzlehttp/guzzle": "^6.0 || ^7.0",
         "jfalque/http-mock": "^1.0"
     },
     "require-dev": {

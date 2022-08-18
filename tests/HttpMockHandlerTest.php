@@ -106,7 +106,7 @@ class HttpMockHandlerTest extends TestCase
                 self::assertNull($stats->getHandlerErrorData());
                 /** @var int|float $transferTime */
                 $transferTime = $stats->getTransferTime();
-                self::assertSame(0, $transferTime);
+                self::assertSame(0.0, $transferTime);
 
                 $onStatsInvoked = true;
             },
@@ -141,7 +141,7 @@ class HttpMockHandlerTest extends TestCase
                 self::assertSame($exception, $stats->getHandlerErrorData());
                 /** @var int|float $transferTime */
                 $transferTime = $stats->getTransferTime();
-                self::assertSame(0, $transferTime);
+                self::assertSame(0.0, $transferTime);
 
                 $onStatsInvoked = true;
             },
